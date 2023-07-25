@@ -12,7 +12,7 @@ WORKDIR /
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
         apk update && apk add --no-cache tzdata python3 py3-pip wget && pip install -i https://pypi.tuna.tsinghua.edu.cn/simple bottle && \
-        wget https://ghproxy.com/https://github.com/kesry/nav/archive/refs/heads/v$VERSION.tgz && tar -xzvf nav-v$VERSION.tgz && \
+        wget https://ghproxy.com/https://github.com/kesry/nav/archive/refs/heads/v$VERSION.tgz && tar -xzvf nav-v$VERSION.tgz --exclude=Dockerfile --exclude=nav.sh && \
         rm -rf nav-v$VERSION.tgz && mv nav-v$VERSION nav && \
     apk del wget py3-pip
 WORKDIR /nav
