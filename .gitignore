@@ -1,0 +1,7 @@
+db/*
+logs/*
+venv
+.idea
+nav.iml
+nav.sh
+dockerfiles

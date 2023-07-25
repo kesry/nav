@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="renderer" content="webkit">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="shortcut icon" href="/favicon.ico">
+		<link rel="stylesheet" href="css/button.css">
+		<link rel="stylesheet" href="css/table.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>我的导航页</title>
+		<script src="js/jquery.min.js"></script>
+		<script type="text/javascript">
+			let page = 1;
+			let size = 10;
+			(async function() {
+				//检验用户是否登陆
+				let res = await $.get(`/login?confirm`)
+				if(res === "no") {
+					//弹出验证框
+					let code = ""
+					let res_post = "no"
+					while(!code || code === "" || res_post !== "yes") {
+						code = window.prompt("请输入服务验证码！")
+						res_post = await $.post("/login", data={
+							"confirm": code
+						});
+					}
+
+				}
+
+				let { data:lis } = await $.get(`/nav?page=${page}&size=1${size}`)
+				init(lis)
+			})()
+
+			function init(lis) {
+				console.log(lis)
+				$(document).ready(function() {
+					//加载页面的数据。
+					Array.from(lis).forEach(li => {
+						let node;
+						if(!li.picpath) {
+							node = $(`<li><a href="${li.navpath}" target="_blank"><img class="shake" src="${li.picbase64}" /><strong>${li.navname}</strong></a></li>`)
+						} else {
+							node = $(`<li><a href="${li.navpath}" target="_blank"><img class="shake" src="${li.picpath}" /><strong>${li.navname}</strong></a></li>`)
+						}
+
+						if(li.navtype === 0) {
+							$("#app ul").append(node)
+						} else {
+							$("#app1 ul").append(node)
+						}
+					})
+				})
+			}
+
+			function addNav() {
+				$(".alert").show();
+			}
+
+			async function submitNav() {
+				let reqData = new FormData($("#navPage")[0]);
+				let result = await $.ajax({
+					type: "POST",
+					url: "/nav/add",
+					timeout: 5000,
+					data: reqData,
+					processData:false,
+					contentType:false
+				});
+				if(result.row > 0) {
+					$("#alert").hide();
+					alert("添加成功！")
+				}
+				console.log(result)
+			}
+		</script>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="top">
+				<div id="logo">
+					<a href="/admin"><img onclick="showMenu()" class="logo" src="img/logo.png"></a>
+					<!-- <h1>导航测试</h1> -->
+					<div id="kg-btn" class="">
+						<input class='tgl tgl-flip' id='qieh' type='checkbox' />
+						<label class='tgl-btn' data-tg-off='内网' data-tg-on='外网' for='qieh'></label>
+					</div>
+				</div>
+			</div>
+			<div id="main">
+				<div id="app" class="app animated fadeInLeft">
+					<ul>
+						<!--<li>-->
+						<!--	<a href="javascript:addNav()"><img class="shake" src="img/add.jpg" /><strong>添加</strong></a>-->
+						<!--</li>-->
+					</ul>
+				</div>
+				<div id="app1" class="app animated fadeInRight">
+					<ul>
+						<!--<li>-->
+						<!--	<a href="javascript:void(0)"><img class="shake" src="img/add.jpg" /><strong>添加</strong></a>-->
+						<!--</li>-->
+
+					</ul>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+		</div>
+	</body>
+
+</html>

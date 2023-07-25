@@ -1,0 +1,428 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>『导航』后台管理</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="css/input.css"/>
+    <link rel="stylesheet" type="text/css" href="css/table.css"/>
+    <link rel="stylesheet" type="text/css" href="css/button.css"/>
+    <link rel="stylesheet" type="text/css" href="css/label.css"/>
+    <link rel="stylesheet" type="text/css" href="css/select.css"/>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/select.js"></script>
+    <script type="text/javascript" src="js/libs/modernizr.min.js"></script>
+    <style>
+        .show-div {
+            display: none;
+            border-bottom: none;
+        }
+        .sub-menu {
+            background-color: #f2f2f2;
+        }
+        .active {
+            background-color: #fff;
+        }
+        .table .tbody .tr {
+            min-height: 40px;
+            line-height: 40px;
+            vertical-align: middle;
+        }
+
+        /*.table .tbody .tr .td {*/
+        /*    border-right: 1px solid #ccc;*/
+        /*}*/
+
+        /*.table .tbody .tr .td:last-child {*/
+        /*    border-right: none;*/
+        /*}*/
+
+        .input {
+            align-items: center;
+        }
+
+        .btn-base {
+            width: 80px;
+            height: 35px;
+            line-height: 35px;
+        }
+
+    </style>
+    <script type="text/javascript">
+
+        (async function() {
+            //检验用户是否登陆
+            let res = await $.get(`/login?confirm`)
+            if(res === "no") {
+                //弹出验证框
+                let code = ""
+                let res_post = "no"
+                while(!code || code === ""|| res_post !== "yes") {
+                    code = window.prompt("请输入服务验证码！")
+                    res_post = await $.post("/login", data={
+                        "confirm": code
+                    });
+                }
+
+            }
+        })()
+
+        const shows = ["list", "add", "edit"];
+        const active = "active"; //激活的样式类
+        let navList = [];
+        function showDiv(tip) {
+            if(tip === 'list') {
+                (async function() {
+                    let { data:navs } = await $.get("/nav?page=1&size=10");
+                    navList = navs;
+                    loadList(navs)
+                })()
+            }
+
+            shows.forEach(e => {
+                if(e !== tip) {
+                    $(`#div-${e}`).hide()
+                    $(`#li-${e}`).removeClass(active)
+                } else {
+                    $(`#div-${e}`).show()
+                    $(`#li-${e}`).addClass(active)
+                }
+            })
+        }
+
+        function loadList(navs) {
+            $(document).ready(function() {
+                $("#pageData").empty();
+               Array.from(navs).forEach(nav => {
+                   let dom = $(`<div class="tr">
+                                <div class="td">${nav.navid}</div>
+                                <div class="td">${nav.navname}</div>
+                                <div class="td">${nav.navpath}</div>
+                                <div class="td">${nav.picpath ? nav.picpath : "无数据"}</div>
+                                <div class="td">${nav.picbase64 ? nav.picbase64 : "无数据"}</div>
+                                <div class="td">${nav.openstatus === 1 ?
+                                '<span class="label-base label-success">启用</span>' :
+                       '<span class="label-base label-danger">禁用</span>'}</div>
+                                <div class="td">${nav.navtype === 0 ? "内网" : "外网"}</div>
+                                <div class="td" style="flex: 2; display: flex; justify-content: center; align-items: center;">
+                                    <div class="btn-small btn-waring" onclick="loadEdit('${nav.navid}')">编辑</div>
+                                    <div class="btn-small btn-danger" onclick="delNav('${nav.navid}', '${nav.navname}')">删除</div>
+                                </div>
+                            </div>`);
+
+                   $("#pageData").append(dom);
+
+               });
+            });
+        }
+
+        function getParamWithUrl() {
+            let href = window.location.href;
+            let i = href.lastIndexOf("?");
+            let res = {};
+            if(i !== -1) {
+                let uri = href.slice(i + 1);
+                let kvs = uri.split("&");
+                for (const kv of kvs) {
+                    let kvArr = kv.split("=")
+                    let k = kvArr[0]
+                    res[k] = kvArr[1];
+                }
+            }
+            return res;
+        }
+
+        function formSubmit() {
+            let data = new FormData($("#addNavForm")[0]);
+            (async function() {
+                let res = await $.ajax({
+                    url: "/nav/add",
+                    method:"post",
+                    data,
+                    contentType: false,
+                    processData: false
+                });
+                if(res.row > 0) {
+                    window.location.href = "/admin?show=list"
+                }
+            })()
+
+        }
+
+        function delNav(navid, navname) {
+            if(window.confirm(`是否需要删除【${navname}】？`)) {
+                (async function(navid) {
+                    let { data: res } = await $.post("/nav/del", data={
+                        navid
+                    });
+                    if(res.row > 0) {
+                        alert("删除成功！")
+                        window.location.href = "/admin?show=list"
+                    }
+                })(navid)
+            }
+        }
+
+        function getNav(navid) {
+            return new Promise((resolve, reject) => {
+                navList.forEach(nav => {
+                    if(nav.navid == navid) {
+                        resolve(nav)
+                    }
+                })
+                reject(new Error("未找到nav!"))
+            })
+        }
+
+        function loadEdit(navid) {
+            (async function() {
+                let nav = await getNav(navid)
+                if(nav) {
+                    showDiv("edit");
+                    for (let k in nav) {
+                        if(nav[k]) {
+                            $(`#editNavForm *[name=${k}]`).val(nav[k])
+                        }
+                    }
+                }
+            })(navid)
+        }
+
+        function formSubmitEdit() {
+            let data = new FormData($("#editNavForm")[0]);
+            (async function() {
+                let res = await $.ajax({
+                    url: "/nav/edit",
+                    method:"post",
+                    data,
+                    contentType: false,
+                    processData: false
+                });
+                if(res.row > 0) {
+                    alert("修改成功！");
+                    window.location.href = "/admin?show=list"
+                }
+            })()
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            (async function() {
+                let params = getParamWithUrl();
+                if(params['show'] && params['show'].trim() !== "") {
+                    showDiv(params['show'])
+                } else {
+                    showDiv("list")
+                }
+            })();
+        });
+    </script>
+</head>
+<body>
+<div class="topbar-wrap white">
+    <div class="topbar-inner clearfix">
+        <div class="topbar-logo-wrap clearfix">
+            <h1 class="topbar-logo none"><a href="index.html" class="navbar-brand">后台管理</a></h1>
+            <ul class="navbar-list clearfix">
+                <li><a class="on" href="index.html">首页</a></li>
+                <li><a href="/" target="_blank">网站首页</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container clearfix">
+    <div class="sidebar-wrap">
+        <div class="sidebar-title">
+            <h1>菜单</h1>
+        </div>
+        <div class="sidebar-content">
+            <ul class="sidebar-list">
+                <li>
+                    <a href="javascript:void(0)"><i class="icon-font">&#xe003;</i>导航管理</a>
+                    <ul class="sub-menu">
+                        <li id="li-list"><a href="javascript:void(0)" onclick="showDiv('list')"><i class="icon-font">&#xe008;</i>导航列表</a></li>
+                        <li id="li-add"><a href="javascript:void(0)" onclick="showDiv('add')"><i class="icon-font">&#xe008;</i>新增导航</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--/sidebar-->
+    <div class="main-wrap">
+        <div class="crumb-wrap">
+            <!-- 此处可以调用公告信息！ -->
+            <div class="crumb-list"><i class="icon-font">&#xe06b;</i><span>欢迎使用导航管理系统。</span></div>
+        </div>
+        <!-- 列表展示 -->
+        <div class="result-wrap show-div" id="div-list">
+            <div class="result-title">
+                <h1>导航列表</h1>
+            </div>
+            <div class="result-title">
+                <div class="result-list">
+                    <a href="javascript:void(0);" onclick="showDiv('add')"><i class="icon-font"></i>新增导航</a>
+                </div>
+            </div>
+            <div class="result-content">
+                <div style="border-top: 1px solid #ccc;">
+                    <div class="table">
+                        <div class="thead">
+                            <div class="tr">
+                                <div class="td">ID</div>
+                                <div class="td">导航名称</div>
+                                <div class="td">访问地址</div>
+                                <div class="td">图片地址</div>
+                                <div class="td">图片base64码</div>
+                                <div class="td">是否启用</div>
+                                <div class="td">导航类型</div>
+                                <div class="td" style="flex: 2;">操作</div>
+                            </div>
+                        </div>
+                        <div id="pageData" class="tbody"></div>
+                        <div class="tfooter" style="border-bottom: none;">
+                            <div class="tr">
+                                <a href="#" class="pre">上一页</a>
+                                <a href="#" class="next">下一页</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增按钮 -->
+        <div class="result-wrap show-div" id="div-add">
+            <div class="result-title">
+                <h1>新增导航</h1>
+            </div>
+            <div class="result-content" style="border-bottom: none;">
+                <form id="addNavForm" method="post" onsubmit="return false;">
+                    <div class="table" style="border: 1px solid #ccc; width: 600px; margin: 0 auto;">
+                    <div class="tbody">
+                        <div class="tr">
+                            <div class="td" style="border-right: 1px solid #ccc; text-align: right;">导航名称：</div>
+                            <div class="td" style="flex: 4; ">
+                                <div class="input" >
+                                    <input name="navname" type="text" placeholder="导航名称" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tr">
+                            <div class="td" style="border-right: 1px solid #ccc; text-align: right;">访问地址：</div>
+                            <div class="td" style="flex: 4; ">
+                                <div class="input" >
+                                    <input name="navpath" type="text" placeholder="访问地址" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tr">
+                            <div class="td" style="border-right: 1px solid #ccc; text-align: right;">图片地址：</div>
+                            <div class="td" style="flex: 4; ">
+                                <div class="input" >
+                                    <input name="picpath" type="text" placeholder="图片地址" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tr">
+                            <div class="td" style="border-right: 1px solid #ccc; text-align: right;">图片base64码：</div>
+                            <div class="td" style="flex: 4; ">
+                                <div class="input" >
+                                    <input name="picbase64" type="text" placeholder="图片base64码" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tr">
+                            <div class="td" style="border-right: 1px solid #ccc; text-align: right;">所属范围：</div>
+                            <div class="td" style="flex: 4; ">
+                                <select name="navtype">
+                                    <option value="0" selected>内网</option>
+                                    <option value="1">外网</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="foo" style="border-bottom: none;">
+                            <div class="td" style="display: flex; justify-content: center; align-items: center;">
+                                <div class="btn-success btn-base" onclick="formSubmit()">
+                                    提交
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 编辑 -->
+        <div class="result-wrap show-div" id="div-edit">
+            <div class="result-title">
+                <h1>编辑导航</h1>
+            </div>
+            <div class="result-content" style="border-bottom: none;">
+                <form id="editNavForm" method="post" onsubmit="return false;">
+                    <div class="table" style="border: 1px solid #ccc; width: 600px; margin: 0 auto;">
+                        <div class="tbody">
+                            <div class="tr">
+                                <div class="td" style="border-right: 1px solid #ccc; text-align: right;">导航名称：</div>
+                                <div class="td" style="flex: 4; ">
+                                    <div class="input" >
+                                        <input name="navname" type="text" placeholder="导航名称" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tr">
+                                <div class="td" style="border-right: 1px solid #ccc; text-align: right;">访问地址：</div>
+                                <div class="td" style="flex: 4; ">
+                                    <div class="input" >
+                                        <input name="navpath" type="text" placeholder="访问地址" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tr">
+                                <div class="td" style="border-right: 1px solid #ccc; text-align: right;">图片地址：</div>
+                                <div class="td" style="flex: 4; ">
+                                    <div class="input" >
+                                        <input name="picpath" type="text" placeholder="图片地址" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tr">
+                                <div class="td" style="border-right: 1px solid #ccc; text-align: right;">图片base64码：</div>
+                                <div class="td" style="flex: 4; ">
+                                    <div class="input" >
+                                        <input name="picbase64" type="text" placeholder="图片base64码" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tr">
+                                <div class="td" style="border-right: 1px solid #ccc; text-align: right;">所属范围：</div>
+                                <div class="td" style="flex: 4; ">
+                                    <select name="navtype">
+                                        <option value="0" selected>内网</option>
+                                        <option value="1">外网</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="border-bottom: none;">
+                                <input type="hidden" name="navid" />
+                                <div class="td" style="display: flex; justify-content: center; align-items: center;">
+                                    <div class="btn-success btn-base" onclick="formSubmitEdit()" style="margin-right: 20px;">
+                                        修改
+                                    </div>
+                                    <div class="btn-base" onclick="showDiv('list')">返回</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

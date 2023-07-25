@@ -1,0 +1,63 @@
+/* select框样式 */
+.select {
+  outline: none;
+  width: 168px;
+  height: 28px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.1s;
+}
+.select .label {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.select .label span {
+  padding: 0 10px;
+  font-size: 12px;
+  color: #606266;
+}
+.select .icon {
+  /* float: right; */
+  width: 25px;
+  height: 25px;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAD9QTFRFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsyWCLwAAABR0Uk5TAKh5J+V95irobCPidx/fjI2siQPoYtzVAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAAASAAAAEgARslrPgAAADFJREFUGNNjYKAaYGRCE2BmYUUXYUMXYefgRBXg4uZB4fPy8aPxBVA1CAqhGSlMiScAYx0A4k6JQTYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMTItMDZUMTA6NDc6MjkrMDg6MDCT3dFtAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTEyLTA2VDEwOjQ3OjI5KzA4OjAw4oBp0QAAAE10RVh0c3ZnOmJhc2UtdXJpAGZpbGU6Ly8vaG9tZS9hZG1pbi9pY29uLWZvbnQvdG1wL2ljb25fYTV6bDFsNWQ5NWUveW91amlhbnRvdS5zdmcqi982AAAAAElFTkSuQmCC);
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: all 0.3s;
+}
+.select-focus { border-color: #409eff; }
+.select .icon-rotate {
+  transform: rotate(90deg);
+}
+/* option样式 */
+.options-panel {
+  border: 1px solid #dcdfe6;
+  transition: all 0.3s;
+  border-bottom: none;
+  /* border-radius: 4px; */
+}
+.options-panel .option {
+  list-style: none;
+  padding: 5px 10px;
+  user-select: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #606266;
+  border-bottom: 1px solid #dcdfe6;
+}
+.options-peanl-none {
+  display: none;
+  border: none;
+}
+.options-panel .option:hover {
+  background-color: #F5F7FA;
+  text-decoration: underline;
+}

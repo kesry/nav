@@ -1,0 +1,37 @@
+.label-base {
+	display: inline-block;
+	padding: 0 10px;
+	height: 32px;
+	border-radius: 4px;
+	line-height: 30px;
+	font-size: 12px;
+	border-width: 1px;
+	border-style: solid;
+	user-select: none;
+}
+
+.label-info {
+	background-color: #ecf5ff;
+	border: 1px solid #d9ecff;
+	color: #409eff;
+}
+
+.label-success {
+	background-color: #f0f9eb;
+	border-color: #e1f3d8;
+	color: #67c23a;
+}
+
+.label-waring {
+	background-color: #fdf6ec;
+	border-color: #faecd8;
+	color: #e6a23c;
+}
+
+.label-danger {
+	background-color: #fef0f0;
+	border-color: #fde2e2;
+	color: #f56c6c;
+}
+
+
