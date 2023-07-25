@@ -1,7 +1,3 @@
-db/*
-!db/.gitkeep
-logs/*
-!logs/.gitkeep
 venv
 .idea
 nav.iml
