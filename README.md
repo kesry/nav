@@ -1,5 +1,11 @@
 # 一个简单的导航
 
+## 内容更新
+1. 用户体验优化，域名默认公网，其余默认内网。
+2. 在管理页面的列表中，除了base64外，悬浮显示内容。
+3. 点击编号进入编辑界面。
+4. 代码优化
+## 安装
 版本v1.2
 
 参考脚本
@@ -14,7 +20,12 @@ wget https://ghproxy.com/https://raw.githubusercontent.com/kesry/nav/v1.2/nav.sh
 
 ```shell
 
-sudo docker run -itd -p 9000:8080 -v ~/nav/db:/nav/db -v ~/nav/log:/nav/logs  --name=nav nav:v1.2
+sudo docker run -itd \
+-p 9000:8080 \
+-v ~/nav/db:/nav/db \
+-v ~/nav/log:/nav/logs \
+--name=nav \
+nav:v1.2
 
 ```
 

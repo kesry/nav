@@ -36,7 +36,6 @@
 			})()
 
 			function init(lis) {
-				console.log(lis)
 				$(document).ready(function() {
 					//加载页面的数据。
 					Array.from(lis).forEach(li => {
@@ -56,34 +55,13 @@
 				})
 			}
 
-			function addNav() {
-				$(".alert").show();
-			}
-
-			async function submitNav() {
-				let reqData = new FormData($("#navPage")[0]);
-				let result = await $.ajax({
-					type: "POST",
-					url: "/nav/add",
-					timeout: 5000,
-					data: reqData,
-					processData:false,
-					contentType:false
-				});
-				if(result.row > 0) {
-					$("#alert").hide();
-					alert("添加成功！")
-				}
-				console.log(result)
-			}
 		</script>
 	</head>
 	<body>
 		<div id="wrap">
 			<div id="top">
 				<div id="logo">
-					<a href="/admin"><img onclick="showMenu()" class="logo" src="img/logo.png"></a>
-					<!-- <h1>导航测试</h1> -->
+					<a href="/admin"><img class="logo" src="img/logo.png"></a>
 					<div id="kg-btn" class="">
 						<input class='tgl tgl-flip' id='qieh' type='checkbox' />
 						<label class='tgl-btn' data-tg-off='内网' data-tg-on='外网' for='qieh'></label>
