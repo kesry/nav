@@ -34,3 +34,5 @@ sudo docker run -itd -p 9000:8080 -v ~/nav/db:/nav/db -v ~/nav/log:/nav/logs  --
     restart: always  
 
 ```
+
+默认服务验证码为:`kesry`
