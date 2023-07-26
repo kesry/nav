@@ -14,6 +14,23 @@ wget https://ghproxy.com/https://raw.githubusercontent.com/kesry/nav/v1.1/nav.sh
 
 ```shell
 
-sudo docker run -itd -p 9000:8080 -v ~/nav/db:/nav/db -v ~/nav/log:/nav/log  --name=nav nav:v1.1
+sudo docker run -itd -p 9000:8080 -v ~/nav/db:/nav/db -v ~/nav/log:/nav/logs  --name=nav nav:v1.1
+
+```
+
+```docker-compose.yml
+  nav:
+    image: nav:v1.1
+    container_name: nav
+    hostname: nav
+    volumes:
+      - /data/nav/db:/nav/db
+      - /data/nav/log:/nav/logs
+    environment: 
+      - CONFIRM=orgic
+      - LOG_LEVEL=error
+    ports:
+      - 80:8080
+    restart: always  
 
 ```
