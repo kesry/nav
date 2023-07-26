@@ -22,6 +22,7 @@ def row_factory(cursor, row):
 
 
 def init():
+    print(f"当前版本: {os.getenv('VERSION')}")
     filepath = os.path.join(os.getcwd(), "db/nav.db")
     print(f"数据库文件保存在:{filepath}")
     conn = sqlite3.connect(filepath)

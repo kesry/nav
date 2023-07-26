@@ -7,7 +7,7 @@ ENV HOST=0.0.0.0
 ENV CONFIRM="kesry"
 ENV LOG_LEVEL="error"
 ENV TZ=Asia/Shanghai
-ENV VERSION=1.1
+ENV VERSION=1.2
 WORKDIR /
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
