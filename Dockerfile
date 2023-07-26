@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM alpine:latest
 
 ENV LANG=zh_CN.UTF-8
 ENV LANGUAGE=zh_CN:zh
