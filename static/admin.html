@@ -154,7 +154,7 @@
         function delNav(navid, navname) {
             if(window.confirm(`是否需要删除【${navname}】？`)) {
                 (async function(navid) {
-                    let { data: res } = await $.post("/nav/del", data={
+                    let res = await $.post("/nav/del", data={
                         navid
                     });
                     if(res.row > 0) {
