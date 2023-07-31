@@ -56,6 +56,14 @@ def dologin():
     else:
         return "no"
 
+@get("/nav/section/<opr>")
+def write_section(opr):
+    print(f"当前操作为：{opr}")
+    if isLogin():
+        return static_file(f"{opr}.html", root=f"./static/section")
+
+    return ""
+
 
 # 静态资源管理
 @route('/<filepath:re:.*[(\.css)|(\.js)|(\.png)|(\.jpg)|(\.gif)|(\.ttf)|(\.txt)|(\.ico)|(\.html)]$>')
@@ -64,6 +72,9 @@ def staticfile(filepath):
     if i != -1:
         filename = filepath[(i + 1):]
         filepath = filepath[:i]
+        if filepath.lower().endswith("section"):
+            print(f"filepath = {filepath};filename = {filename}")
+            return "Invalid request!"
     else:
         filename = filepath
         filepath = ""

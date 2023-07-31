@@ -1,0 +1,113 @@
+<div class="result-title">
+    <h1>导航列表</h1>
+</div>
+<div class="result-title">
+    <div class="result-list">
+        <a href="javascript:void(0);" onclick="showDiv('add')"><i class="icon-font"></i>新增导航</a>
+    </div>
+</div>
+<div class="result-content">
+    <div style="border-top: 1px solid #ccc;">
+        <div class="table">
+            <div class="thead">
+                <div class="tr">
+                    <div class="td">ID</div>
+                    <div class="td">导航名称</div>
+                    <div class="td">访问地址</div>
+                    <div class="td">图片地址</div>
+                    <div class="td">图片base64码</div>
+                    <div class="td">是否启用</div>
+                    <div class="td">导航类型</div>
+                    <div class="td" style="flex: 2;">操作</div>
+                </div>
+            </div>
+            <div id="pageData" class="tbody"></div>
+            <div class="tfooter" style="border-bottom: none;">
+                <div class="tr">
+                    <a href="#" class="pre">上一页</a>
+                    <a href="#" class="next">下一页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    /**
+     * 第一加载完list列表后调用
+     * @param navs
+     */
+    function loadList(navs) {
+        $(document).ready(function() {
+            $("#pageData").empty();
+            Array.from(navs).forEach(nav => {
+                let dom = $(`<div class="tr">
+                                <div onclick="loadEdit('${nav.navid}')" title="${nav.navid}" class="td">${nav.navid}</div>
+                                <div title="${nav.navname}" class="td">${nav.navname}</div>
+                                <div title="${nav.navpath}" class="td">${nav.navpath}</div>
+                                <div title="${nav.picpath}" class="td">${nav.picpath ? nav.picpath : "无数据"}</div>
+                                <div class="td">${nav.picbase64 ? nav.picbase64 : "无数据"}</div>
+                                <div class="td">${nav.openstatus === 1 ?
+                    '<span class="label-base label-success">启用</span>' :
+                    '<span class="label-base label-danger">禁用</span>'}</div>
+                                <div class="td">${nav.navtype === 0 ? "内网" : "外网"}</div>
+                                <div class="td" style="flex: 2; display: flex; justify-content: center; align-items: center;">
+                                    <div class="btn-small btn-waring" onclick="loadEdit('${nav.navid}')">编辑</div>
+                                    <div class="btn-small btn-danger" onclick="delNav('${nav.navid}', '${nav.navname}')">删除</div>
+                                </div>
+                            </div>`);
+
+                $("#pageData").append(dom);
+
+            });
+        });
+    }
+
+    function delNav(navid, navname) {
+        if(window.confirm(`是否需要删除【${navname}】？`)) {
+            (async function(navid) {
+                let res = await $.post("/nav/del", data={
+                    navid
+                });
+                if(res.row > 0) {
+                    alert("删除成功！")
+                    window.location.href = "/admin?show=list"
+                }
+            })(navid)
+        }
+    }
+
+    function getNav(navid) {
+        return new Promise((resolve, reject) => {
+            navList.forEach(nav => {
+                if(nav.navid == navid) {
+                    resolve(nav)
+                }
+            })
+            reject(new Error("未找到nav!"))
+        })
+    }
+
+    async function loadEdit(navid) {
+        let nav = await getNav(navid)
+        if(nav) {
+            await showDiv("edit");
+            $("#div-edit").bind( "DOMNodeInserted",function () {
+                for (let k in nav) {
+                    if(nav[k]) {
+                        $(`#editNavForm *[name=${k}]`).val(nav[k])
+                    }
+                }
+                $("#div-edit").unbind("DOMNodeInserted")
+            })
+        }
+    }
+
+    (async function() {
+        let {data: navs} = await $.get("/nav?page=1&size=10");
+        navList = navs;
+        loadList(navList)
+    })()
+
+
+</script>

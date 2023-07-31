@@ -1,0 +1,80 @@
+<div class="result-title">
+    <h1>编辑导航</h1>
+</div>
+<div class="result-content" style="border-bottom: none;">
+    <form id="editNavForm" method="post" onsubmit="return false;">
+        <div class="table" style="border: 1px solid #ccc; width: 600px; margin: 0 auto;">
+            <div class="tbody">
+                <div class="tr">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right;">导航名称：</div>
+                    <div class="td" style="flex: 4; ">
+                        <div class="input" >
+                            <input name="navname" type="text" placeholder="导航名称" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tr">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right;">访问地址：</div>
+                    <div class="td" style="flex: 4; ">
+                        <div class="input" >
+                            <input name="navpath" type="text" placeholder="访问地址" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tr">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right;">图片地址：</div>
+                    <div class="td" style="flex: 4; ">
+                        <div class="input" >
+                            <input name="picpath" type="text" placeholder="图片地址" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tr">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right;">图片base64码：</div>
+                    <div class="td" style="flex: 4; ">
+                        <div class="input" >
+                            <input name="picbase64" type="text" placeholder="图片base64码" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tr">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right;">所属范围：</div>
+                    <div class="td" style="flex: 4; ">
+                        <select name="navtype">
+                            <option value="0" selected>内网</option>
+                            <option value="1">外网</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="border-bottom: none;">
+                    <input type="hidden" name="navid" />
+                    <div class="td" style="display: flex; justify-content: center; align-items: center;">
+                        <div class="btn-success btn-base" onclick="formSubmitEdit()" style="margin-right: 20px;">
+                            修改
+                        </div>
+                        <div class="btn-base" onclick="showDiv('list')">返回</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    function formSubmitEdit() {
+        let data = new FormData($("#editNavForm")[0]);
+        (async function() {
+            let res = await $.ajax({
+                url: "/nav/edit",
+                method:"post",
+                data,
+                contentType: false,
+                processData: false
+            });
+            if(res.row > 0) {
+                alert("修改成功！");
+                window.location.href = "/admin?show=list"
+            }
+        })()
+    }
+
+</script>
