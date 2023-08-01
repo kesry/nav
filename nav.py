@@ -94,6 +94,16 @@ def navs():
         conn = pool.getConn()
         sql = "select * from nav limit ? offset ? "
         result = conn.execute(sql, (size, (page - 1) * size))
+
+        # 如果result中的数据量小于size，则必定没有下一页
+        total_res = pool.execute("select 1 from nav")
+        total = len(total_res["data"])
+        print(f"total = {total}")
+        if total > size * page:
+            result["hasNext"] = 1
+        else:
+            result["hasNext"] = 0
+
         pool.release(conn)
         return result
     else:

@@ -2,6 +2,9 @@
     <h1>导航列表</h1>
 </div>
 <div class="result-title">
+
+</div>
+<div class="result-title">
     <div class="result-list">
         <a href="javascript:void(0);" onclick="showDiv('add')"><i class="icon-font"></i>新增导航</a>
     </div>
@@ -24,8 +27,8 @@
             <div id="pageData" class="tbody"></div>
             <div class="tfooter" style="border-bottom: none;">
                 <div class="tr">
-                    <a href="#" class="pre">上一页</a>
-                    <a href="#" class="next">下一页</a>
+                    <a href="javascript:void(0)" onclick="loadPage(-1)" class="pre">上一页</a>
+                    <a href="javascript:void(0)" onclick="loadPage(1)" class="next">下一页</a>
                 </div>
             </div>
         </div>
@@ -103,11 +106,41 @@
         }
     }
 
-    (async function() {
-        let {data: navs} = await $.get("/nav?page=1&size=10");
+    async function loadPage(increment) {
+
+        if (increment < 0) {
+            if((page + increment) <= 1) {
+                $(".pre").addClass("disabled")
+            }
+        } else if(increment === 0) {
+            $(".pre").addClass("disabled")
+        } else {
+            $(".pre").removeClass("disabled")
+        }
+
+        let {data: navs, hasNext} = await $.get(`/nav?page=${page + increment}&size=${size}`);
         navList = navs;
         loadList(navList)
+        if(!hasNext) {
+            $(".next").addClass("disabled")
+        } else {
+            $(".next").removeClass("disabled")
+        }
+        page = page + increment
+    }
+    (function() {
+        loadPage(0)
     })()
 
 
 </script>
+<style>
+    .disabled {
+        pointer-events: none;
+        cursor: not-allowed;
+        color: #666;
+    }
+    .tfooter .tr .td {
+        text-align: center;
+    }
+</style>

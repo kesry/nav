@@ -57,8 +57,17 @@
                         "confirm": code
                     });
                 }
-
             }
+            $(document).ready(function() {
+                (async function() {
+                    let params = getParamWithUrl();
+                    if(params['show'] && params['show'].trim() !== "") {
+                        showDiv(params['show'])
+                    } else {
+                        showDiv("list")
+                    }
+                })();
+            });
         })()
 
         const shows = [{
@@ -74,7 +83,7 @@
         const active = "active"; //激活的样式类
         let navList = [];
         let page = 1;
-        let size = 10;
+        let size = 5;
         function showDiv(tip) {
 
             if(tip === 'list' && typeof(loadList) != "undefined") {
@@ -119,18 +128,6 @@
             return res;
         }
 
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            (async function() {
-                let params = getParamWithUrl();
-                if(params['show'] && params['show'].trim() !== "") {
-                    showDiv(params['show'])
-                } else {
-                    showDiv("list")
-                }
-            })();
-        });
     </script>
 </head>
 <body>
