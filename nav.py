@@ -48,17 +48,15 @@ def admin():
 @post("/login")
 def dologin():
     confirm_post = request.forms.get("confirm")
-    print(f"confirm = {confirm_post}")
-    print(f"server = {config['confirm']}")
     if confirm_post == config["confirm"]:
         response.set_cookie("confirm", confirm_post)
         return "yes"
     else:
         return "no"
 
+
 @get("/nav/section/<opr>")
 def write_section(opr):
-    print(f"当前操作为：{opr}")
     if isLogin():
         return static_file(f"{opr}.html", root=f"./static/section")
 
@@ -73,7 +71,6 @@ def staticfile(filepath):
         filename = filepath[(i + 1):]
         filepath = filepath[:i]
         if filepath.lower().endswith("section"):
-            print(f"filepath = {filepath};filename = {filename}")
             return "Invalid request!"
     else:
         filename = filepath
@@ -98,7 +95,6 @@ def navs():
         # 如果result中的数据量小于size，则必定没有下一页
         total_res = pool.execute("select 1 from nav")
         total = len(total_res["data"])
-        print(f"total = {total}")
         if total > size * page:
             result["hasNext"] = 1
         else:
@@ -117,7 +113,7 @@ def add_nav():
     sql = "insert into nav(navname, navpath, picpath, picbase64, navtype) values(?, ?, ?, ?, ?)";
     conn = pool.getConn()
     result = conn.execute(sql, (
-    nav.get("navname"), nav.get("navpath"), nav.get("picpath"), nav.get("picbase64"), nav.get("navtype")))
+        nav.get("navname"), nav.get("navpath"), nav.get("picpath"), nav.get("picbase64"), nav.get("navtype")))
     pool.release(conn)
     return result
 
@@ -125,10 +121,8 @@ def add_nav():
 @post("/nav/del")
 def del_nav():
     navid = int(request.forms.get("navid"))
-    print(navid)
     if navid and isLogin():
         conn = pool.getConn()
-        print(type(navid))
         result = conn.execute("delete from nav where navid = ?", (navid,))
         pool.release(conn)
         return result
@@ -139,15 +133,28 @@ def del_nav():
 
 @post("/nav/edit")
 def edit_nav():
-
     if not isLogin():
         LOG.warn("Invalid Request!")
         return "Invalid Request!"
 
     nav = request.forms
-    sql = "update nav set navname = ?, navpath = ?, picpath = ?, picbase64 = ?, navtype = ? where navid = ?";
+    sql = "update nav set navname = ?, navpath = ?, picpath = ?, picbase64 = ?, navtype = ? where navid = ?"
     conn = pool.getConn()
     result = conn.execute(sql, (
-        nav.get("navname"), nav.get("navpath"), nav.get("picpath"), nav.get("picbase64"), nav.get("navtype"), nav.get("navid")))
+        nav.get("navname"), nav.get("navpath"), nav.get("picpath"), nav.get("picbase64"), nav.get("navtype"),
+        nav.get("navid")))
     pool.release(conn)
     return result
+
+
+@post("/api/nav/edit")
+def remote_update():
+    new_info = request.forms
+    if new_info.get("confirm") == config["confirm"]:
+        if len(pool.execute("select navid from nav where navid = ?", (new_info.get("navid"),))["data"]) > 0:
+            sql = "update nav set navpath = ? where navid = ?"
+            if pool.execute(sql, (new_info.get("navpath"), new_info.get("navid")))["row"] > 0:
+                return "success"
+        return "update fail"
+    else:
+        return "Invalid requests"
