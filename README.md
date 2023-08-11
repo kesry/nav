@@ -6,11 +6,11 @@
 3. 点击编号进入编辑界面。
 4. 代码优化
 ## 安装
-版本v1.2
+版本v1.2.2
 
 参考脚本
 ```shell
-wget https://ghproxy.com/https://raw.githubusercontent.com/kesry/nav/v1.2/nav.sh && sudo chmod +x nav.sh && ./nav.sh
+wget https://ghproxy.com/https://raw.githubusercontent.com/kesry/nav/v1.2.2/nav.sh && sudo chmod +x nav.sh && ./nav.sh
 ```
 
 以上脚本可以帮助你构建一个nav:v1.2的镜像。
