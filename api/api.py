@@ -1,3 +1,4 @@
+from importlib.abc import ExecutionLoader
 from bottle import route, template, get, post, request, static_file, response
 from db import pool
 from conf import config
@@ -31,7 +32,7 @@ def remote_get_navpath(navid):
         if len(result['data']) > 0:
             return result['data'][0]['navpath']
         return "no data"
-    except e:
+    except Exception as e:
         LOG.error(f"数据值错误：{navid}，错误原因：{e}")
         return "Invalid Request"
         
