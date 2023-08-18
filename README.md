@@ -32,7 +32,7 @@ nav:v1.2.3
 
 ```docker-compose.yml
   nav:
-    image: nav:v1.2
+    image: nav:v1.2.3
     container_name: nav
     hostname: nav
     volumes:
