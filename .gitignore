@@ -3,3 +3,4 @@ venv
 nav.iml
 dockerfiles
 .vscode
+__pycache__/
