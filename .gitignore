@@ -4,3 +4,4 @@ nav.iml
 dockerfiles
 .vscode
 __pycache__/
+nav.code-workspace
