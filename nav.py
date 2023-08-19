@@ -138,11 +138,38 @@ def edit_nav():
         return "Invalid Request!"
 
     nav = request.forms
-    sql = "update nav set navname = ?, navpath = ?, picpath = ?, picbase64 = ?, navtype = ? where navid = ?"
+    sql = "update nav set navname = ?, navpath = ?, picpath = ?, picbase64 = ?, navtype = ?, openstatus = ? where navid = ?"
     conn = pool.getConn()
     result = conn.execute(sql, (
-        nav.get("navname"), nav.get("navpath"), nav.get("picpath"), nav.get("picbase64"), nav.get("navtype"),
+        nav.get("navname"), nav.get("navpath"), nav.get("picpath"), nav.get("picbase64"), nav.get("navtype"), nav.get("openstatus"),
         nav.get("navid")))
     pool.release(conn)
     return result
 
+@post("/nav/<navid>/<opr>")
+def nav_change_status(navid, opr):
+    if not isLogin():
+        LOG.warn("Invalid Request!Not Login!")
+        return "Invalid Request!Not Login!"
+    print(f"navid = {navid}, opr = {opr}")
+    if opr != 'open' and opr != 'close':
+        response.status = 404
+        return '404'
+    
+    try:
+        navid = int(navid)
+        if navid < 1 :
+            return "id不能小于1"
+        
+        status = 1
+        if opr == 'close':
+            status = 0
+        
+        sql = "update nav set openstatus = ? where navid = ?"
+        return pool.execute(sql,(status, navid))
+                          
+    except Exception as e:
+        LOG.error(f"数据值错误：{navid}，错误原因：{e}")
+        return "Invalid Request"
+    
+    

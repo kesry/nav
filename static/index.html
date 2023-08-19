@@ -39,6 +39,9 @@
 				$(document).ready(function() {
 					//加载页面的数据。
 					Array.from(lis).forEach(li => {
+						if (li.openstatus === 0) {
+							return
+						}
 						let node;
 						if(!li.picpath) {
 							node = $(`<li><a href="${li.navpath}" target="_blank"><img class="shake" src="${li.picbase64}" /><strong>${li.navname}</strong></a></li>`)

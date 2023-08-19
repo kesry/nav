@@ -50,7 +50,7 @@
                                 <div title="${nav.navpath}" class="td">${nav.navpath}</div>
                                 <div title="${nav.picpath}" class="td">${nav.picpath ? nav.picpath : "无数据"}</div>
                                 <div class="td">${nav.picbase64 ? nav.picbase64 : "无数据"}</div>
-                                <div class="td">${nav.openstatus === 1 ?
+                                <div onclick="changeNavStatus(${nav.navid}, '${nav.openstatus === 1 ? 'close':'open'}')" class="td">${nav.openstatus === 1 ?
                     '<span class="label-base label-success">启用</span>' :
                     '<span class="label-base label-danger">禁用</span>'}</div>
                                 <div class="td">${nav.navtype === 0 ? "内网" : "外网"}</div>
@@ -104,6 +104,24 @@
                 $("#div-edit").unbind("DOMNodeInserted")
             })
         }
+    }
+
+    async function changeNavStatus(navid, opr) {
+        let opr_cn = "启用"
+        if (opr === 'close') {
+            opr_cn = "禁用"
+        }
+        if (!confirm(`是否${opr_cn}?`)) {
+            return
+        }
+
+        let res = await $.post(`/nav/${navid}/${opr}`)
+        if(res.row > 0) {
+            alert(`${opr_cn}成功`)
+        } else {
+            alert(`${opr_cn}失败`)
+        }
+        loadPage(0)
     }
 
     async function loadPage(increment) {
