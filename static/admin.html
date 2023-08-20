@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="css/table.css"/>
     <link rel="stylesheet" type="text/css" href="css/button.css"/>
     <link rel="stylesheet" type="text/css" href="css/label.css"/>
-    <link rel="stylesheet" type="text/css" href="css/select.css"/>
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/common.js"></script>
     <script type="text/javascript" src="js/select.js"></script>
@@ -40,7 +39,25 @@
             height: 35px;
             line-height: 35px;
         }
-
+        .select {
+            border: 1px solid #ccc;
+            line-height: 28px;
+            height: 28px;
+            vertical-align: middle;
+            outline: none;
+            width: 100px;
+            background-color: #fff;
+            border-radius: 4px;
+            color: #333;
+        }
+        
+        .select option {
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .select:active {
+            border-color: #409eff;  
+        }  
     </style>
     <script type="text/javascript">
 
