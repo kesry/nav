@@ -3,20 +3,18 @@
 本次小版本更新，添加启用禁用支持，可以在list页面对当前数据禁用，也可以通过编辑禁用！。
 同时，Dockerfile基础镜像修改，固定为3.18版本，不再以latest作为基础镜像！
 
-## 内容更新
-1. 用户体验优化，域名默认公网，其余默认内网。
-2. 在管理页面的列表中，除了base64外，悬浮显示内容。
-3. 点击编号进入编辑界面。
-4. 代码优化
+## 本次内容更新
+添加referrer
+
 ## 安装
-版本v1.2.4
+版本v1.2.5
 
 参考脚本
 ```shell
-wget https://ghproxy.com/https://raw.githubusercontent.com/kesry/nav/v1.2.4/nav.sh && chmod +x nav.sh && ./nav.sh
+wget https://ghproxy.com/https://raw.githubusercontent.com/kesry/nav/v1.2.5/nav.sh && chmod +x nav.sh && ./nav.sh
 ```
  
-以上脚本可以帮助你构建一个nav:v1.2的镜像。
+以上脚本可以帮助你构建一个nav:v1.2.5的镜像。
 
 你需要使用docker命令去启动它
 
@@ -27,20 +25,20 @@ sudo docker run -itd \
 -v ~/nav/db:/nav/db \
 -v ~/nav/log:/nav/logs \
 --name=nav \
-nav:v1.2.4
+nav:v1.2.5
 
 ```
 
 ```docker-compose.yml
   nav:
-    image: nav:v1.2.4
+    image: nav:v1.2.5
     container_name: nav
     hostname: nav
     volumes:
       - /data/nav/db:/nav/db
       - /data/nav/log:/nav/logs
     environment: 
-      - CONFIRM=orgic
+      - CONFIRM=kesry
       - LOG_LEVEL=error
     ports:
       - 80:8080
