@@ -12,6 +12,26 @@
 		<link rel="stylesheet" href="css/table.css">
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
 		<title>我的导航页</title>
+		<style>
+			.select {
+				border-left: 2px solid #000;
+				border-right: 2px solid #000;
+				line-height: 28px;
+				height: 28px;
+				vertical-align: middle;
+				outline: none;
+				width: 110px;
+				/* background-color: #fff; */
+				/* border-radius: 4px; */
+				color: #333;
+				background:rgba(255,255,255,0.5)
+			}
+			
+			.select option {
+				font-size: 16px;
+				cursor: pointer;
+			}
+		</style>
 		<script src="js/jquery.min.js"></script>
 		<script type="text/javascript">
 			let page = 1;
@@ -24,7 +44,7 @@
 					let code = ""
 					let res_post = "no"
 					while(!code || code === "" || res_post !== "yes") {
-						code = window.prompt("请输入服务验证码！")
+						code = window.prompt("请输入服务码！")
 						res_post = await $.post("/login", data={
 							"confirm": code
 						});
@@ -70,6 +90,11 @@
 						<input class='tgl tgl-flip' id='qieh' type='checkbox' />
 						<label class='tgl-btn' data-tg-off='内网' data-tg-on='外网' for='qieh'></label>
 					</div>
+					<select style="margin-left: 28px;" class="select" name="targethost" id="hosts">
+						<option value="">全部</option>
+						<option value="10.244.1.7">10.244.1.7</option>
+						<option value="10.244.8.8">10.244.8.8</option>
+					</select>
 				</div>
 			</div>
 			<div id="main">
