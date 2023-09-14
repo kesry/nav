@@ -55,12 +55,12 @@ def init():
     cursor = conn.cursor()
     cursor.execute("select set_content from settings where set_name = 'system'")
     settings = cursor.fetchone()
-    print(f"type: {type(settings)}")
     settings = json.loads(settings['set_content'])
     print(settings)
     print(settings['version'])
     cursor.close()
     if settings['version'] != version:
+        # 此处需要从历史的sql中一步步更新！
         update_sql_path = os.path.join(os.getcwd(), f"db/sql/v{version}.sql")
         if os.path.isfile(update_sql_path):
             with open(update_sql_path, mode="r", encoding="utf-8") as f:

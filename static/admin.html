@@ -95,6 +95,9 @@
         }, {
             name: "edit",
             isFirst: true
+        }, {
+            name: "settings",
+            isFirst: true
         }];
         const active = "active"; //激活的样式类
         let navList = [];
@@ -170,6 +173,7 @@
                     <ul class="sub-menu">
                         <li id="li-list"><a href="javascript:void(0)" onclick="showDiv('list')"><i class="icon-font">&#xe008;</i>导航列表</a></li>
                         <li id="li-add"><a href="javascript:void(0)" onclick="showDiv('add')"><i class="icon-font">&#xe008;</i>新增导航</a></li>
+                        <li id="li-settings"><a href="javascript:void(0)" onclick="showDiv('settings')"><i class="icon-font">&#xe008;</i>用户设置</a></li>
                     </ul>
                 </li>
             </ul>
@@ -191,6 +195,9 @@
 
         <!-- 编辑 -->
         <div class="result-wrap show-div" id="div-edit"></div>
+
+        <!-- 用户设置 -->
+        <div class="result-wrap show-div" id="div-settings"></div>
 
     </div>
 </div>

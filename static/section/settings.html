@@ -1,0 +1,156 @@
+<style>
+    #hosts {
+        height: 100%;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+    }
+
+</style>
+<div class="result-title">
+    <h1>用户设置</h1>
+</div>
+<div class="result-content" style="border-bottom: none;">
+    <form id="settingsForm" method="post" onsubmit="return false;">
+        <div class="table" style="border: 1px solid #ccc; width: 600px; margin: 0 auto;">
+            <div class="tbody">
+                <div class="tr" style="height: 200px;">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right; line-height: 200px;">预设IP：</div>
+                    <div class="td" style="flex: 4; text-align: left;">
+                        <div class="table" style="height: 100%;">
+                            <div class="tbody" id="hosts" style="overflow-y: scroll; overflow-x: hidden;">
+                                <div class="tr">
+                                    <div class="td" style="flex: 4; border-right: 1px solid #ccc; text-align: center; ">
+                                        127.0.0.1
+                                    </div>
+                                    <div class="td" style="text-align: left; align-items: center;">
+                                        <div class="btn-base btn-danger">删除</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tr">
+                    <div class="td" style="border-right: 1px solid #ccc; text-align: right;" title="首页默认展示">首页默认展示：</div>
+                    <div class="td" style="flex: 4; ">
+                        <div class="input" >
+                            <select style="width: 110px;" class="select" name="activehost" id="activehosts"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="foo" style="border-bottom: none;">
+                    <div class="td" style="display: flex; justify-content: center; align-items: center;">
+                        <div class="btn-success btn-base" onclick="saveSettings()">
+                            保存
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    let ip_i = 1; //设置页添加IP
+    let hosts = [];
+    (async function() {
+        let settings = await $.get("/user/settings")
+        let {
+            hosts:lis,
+            activehost
+        } = settings;
+        hosts = settings["hosts"]
+        console.log(activehost);
+        hosts = lis;
+        $(document).ready(function() {
+            renderIps(lis);
+            $("#activehosts").val(activehost);
+        })
+    })()
+
+    // 保存函数
+    function saveSettings() {
+        // alert("save success");
+        if ($("#activehosts").val() == "") {
+            alert("请选择一个默认显示IP")
+            return
+        }
+
+        let data = new FormData($("#settingsForm")[0]);
+        data.append("hosts", JSON.stringify(hosts));
+        // data.append("hosts", hosts);
+        (async function() {
+            let res = await $.ajax({
+                url: "/user/settings",
+                method:"post",
+                data,
+                contentType: false,
+                processData: false
+            });
+            if(res.row > 0) {
+                alert("修改成功！")
+                window.location.href = "/admin?show=settings"
+            }
+        })()
+    }
+
+    // 渲染页面预设IP和首页默认设置IP
+    function renderIps(lis) {
+        let ulHtml = ""
+        let selHtml = '<option value="">请选择</option>'
+        Array.from(lis).forEach(li => {
+            ulHtml += `
+            <div class="tr" id="ip-${li}">
+                <div class="td" style="flex: 4; border-right: 1px solid #ccc; text-align: center; ">
+                    ${li}
+                </div>
+                <div class="td" style="text-align: left; align-items: center;">
+                    <div class="btn-base btn-danger" onclick="delIp('${li}')">删除</div>
+                </div>
+            </div>
+            `            
+            selHtml += `<option val="${li}">${li}</option>`                           
+        })
+        ulHtml += `
+        <div class="tr">
+                <div class="td" style="flex: 4; border-right: 1px solid #ccc; text-align: center; ">
+                    <div class="input" >
+                        <input data-ip="${ip_i}" type="text" placeholder="新增IP" />
+                    </div>   
+                </div>
+                <div class="td" style="text-align: left; align-items: center;">
+                    <div onclick="addHosts(${ip_i})" class="btn-base btn-success">新增</div>
+                </div>
+            </div>
+        `
+        $("#hosts").empty()
+        $("#hosts").html(ulHtml)
+
+        $("#activehosts").empty()
+        $("#activehosts").html(selHtml)
+    }
+
+    function delIp(id) {
+        //删除待提交数据的列表中的值
+        hosts = hosts.filter(e => id != e)
+        //重渲染IP
+        $(document.getElementById(`ip-${id}`)).remove()
+    }
+
+    function addHosts(i) {
+        let ip = $(`input[data-ip=${i}]`).val()
+        let index = hosts.indexOf(ip);       
+        if (/([0,1]?\d{1,2}|2([0-4][0-9]|5[0-5]))(\.([0,1]?\d{1,2}|2([0-4][0-9]|5[0-5]))){3}/.test(ip)) {
+            if(index != -1) {
+                alert("第" + (index + 1) + "行IP已重复");
+            } else {
+                hosts.push(ip)
+                ip_i++;
+                renderIps(hosts)
+            }
+        } else {
+            alert("请输入正确IP");
+        }
+    }
+</script>

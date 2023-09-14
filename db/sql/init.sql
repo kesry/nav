@@ -13,8 +13,4 @@ create table if not exists settings(
     set_content varchar(5000) not null
 );
 
-insert into settings(set_name, set_content) 
-    select 'system' as set_name , '{ "hosts": ["127.0.0.1"], "version": "0.0.0" }' as set_content
-    from settings where not exists(select set_id from settings where set_name = 'system');
-
-insert or ignore into settings(set_name, set_content) values('system', '{ "hosts": ["127.0.0.1"], "version": "0.0.0" }')
+insert or ignore into settings(set_name, set_content) values('system', '{ "hosts": [], "version": "0.0.0", "activehost": "" }')

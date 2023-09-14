@@ -1,1 +1,4 @@
-
+[ERROR]2023-09-14 13:30:01,653:653.0.8828,8348#>[user_settings_update]:76  near "=": syntax error
+[ERROR]2023-09-14 13:30:59,018:18.0.9708,9020#>[user_settings_update]:77  near "=": syntax error
+[ERROR]2023-09-14 13:32:03,800:800.0.1104,6772#>[user_settings_update]:74  near "set_content": syntax error
+[ERROR]2023-09-14 13:32:58,446:446.0.2516,4408#>[user_settings_update]:74  no such column: set_content

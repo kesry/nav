@@ -52,6 +52,9 @@
 
 				}
 
+				// 加载用户设置
+				let settings = await $.get("/user/host")
+				initsettings(settings)
 				let { data:lis } = await $.get(`/nav?page=${page}&size=1${size}`)
 				init(lis)
 			})()
@@ -79,6 +82,25 @@
 				})
 			}
 
+			function initsettings(settings) {
+				let {
+					hosts:options,
+					activehost
+				} = settings;
+				$(document).ready(function() {
+					let selHtml = `<option value="">全部</option>`
+					Array.from(options).forEach(option => {
+						if (option === activehost) {
+							selHtml += `<option selected value="${option}">${option}</option>`
+						} else {
+							selHtml += `<option value="${option}">${option}</option>`
+						}
+					})
+					$("#hosts").empty()
+					$("#hosts").html(selHtml)
+				})
+			}
+
 		</script>
 	</head>
 	<body>
@@ -91,9 +113,7 @@
 						<label class='tgl-btn' data-tg-off='内网' data-tg-on='外网' for='qieh'></label>
 					</div>
 					<select style="margin-left: 28px;" class="select" name="targethost" id="hosts">
-						<option value="">全部</option>
-						<option value="10.244.1.7">10.244.1.7</option>
-						<option value="10.244.8.8">10.244.8.8</option>
+						
 					</select>
 				</div>
 			</div>

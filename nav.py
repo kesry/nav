@@ -4,11 +4,6 @@ from conf import config
 from log import LOG
 
 
-# @route("/user/:username")
-# def getUser(username):
-#     return template("<h3>用户名:{{username}}</h3>", username=username)
-
-
 def isLogin():
     confirm_server = config["confirm"]
     confirm_req = request.get_cookie("confirm")
